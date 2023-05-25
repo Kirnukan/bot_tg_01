@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Kirnukan/bot_tg_01/internal/service/entity"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 	"log"
@@ -24,6 +26,8 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 
+	entityService := entity.NewService()
+
 	for update := range updates {
 		if update.Message != nil {
 
@@ -32,6 +36,8 @@ func main() {
 				helpCommand(bot, update.Message)
 			case "hello":
 				helloCommand(bot, update.Message)
+			case "list":
+				listCommand(bot, update.Message, entityService)
 			default:
 				defaultMessaging(bot, update.Message)
 			}
@@ -40,13 +46,30 @@ func main() {
 }
 
 func helpCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "/help - help")
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID,
+		"/help - help\n"+
+			"/list - list entities",
+	)
 
 	bot.Send(msg)
 }
 
 func helloCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "Hello, "+inputMessage.From.UserName)
+
+	bot.Send(msg)
+}
+
+func listCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message, entityService *entity.Service) {
+	entitiesMsgText := "Entities List: \n\n"
+
+	entities := entityService.List()
+
+	for i, e := range entities {
+		entitiesMsgText += fmt.Sprintf("%d) %s\n", i+1, e.Title)
+	}
+
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, entitiesMsgText)
 
 	bot.Send(msg)
 }

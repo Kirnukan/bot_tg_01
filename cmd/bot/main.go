@@ -1,27 +1,15 @@
 package main
 
 import (
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func goDotEnvVariable(key string) string {
-
-	// load .env file
-	err := godotenv.Load("local.env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
-
 func main() {
-	dotEnvApi := goDotEnvVariable("API_KEY")
+	godotenv.Load("local.env")
+	dotEnvApi := os.Getenv("API_KEY")
 	bot, err := tgbotapi.NewBotAPI(dotEnvApi)
 	if err != nil {
 		log.Panic(err)

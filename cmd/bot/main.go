@@ -31,18 +31,6 @@ func main() {
 	commander := commands.NewCommander(bot, entityService)
 
 	for update := range updates {
-		if update.Message != nil {
-
-			switch update.Message.Command() {
-			case "help":
-				commander.Help(update.Message)
-			case "hello":
-				commander.Hello(update.Message)
-			case "list":
-				commander.List(update.Message)
-			default:
-				commander.Default(update.Message)
-			}
-		}
+		commander.HandleUpdate(update)
 	}
 }

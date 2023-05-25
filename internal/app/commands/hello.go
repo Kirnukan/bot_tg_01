@@ -9,3 +9,7 @@ func (c *Commander) Hello(inputMessage *tgbotapi.Message) {
 
 	c.bot.Send(msg)
 }
+
+func init() {
+	registeredCommands["hello"] = (*Commander).Hello
+}
